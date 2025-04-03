@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -81,15 +82,27 @@ func main() {
 
 func generateTemporaryFile(c *gin.Context) (*os.File, error) {
 	// Request file
-	file, _, err := c.Request.FormFile("file")
+	file, header, err := c.Request.FormFile("file")
 
 	if err != nil {
 		c.JSON(400, gin.H{"error": fmt.Sprintf("No file is received: %v", err)})
 		return nil, err
 	}
 
-	// Create temporary file to store the uploaded file (for chunking)
-	tempFile, err := os.CreateTemp("", "upload-*.tmp")
+	defer file.Close()
+
+	// Extract original filename
+	originalFilename := header.Filename
+
+	// Get system temp directory
+	tempDir := os.TempDir()
+
+	// Create temp file path with the original filename
+	tempFilePath := filepath.Base(fmt.Sprintf("%s/%s", tempDir, originalFilename))
+
+	// Create a temporary file
+	tempFile, err := os.Create(tempFilePath)
+
 	if err != nil {
 		c.JSON(500, gin.H{"error": fmt.Sprintf("Failed to create temporary file: %v", err)})
 		return nil, err
@@ -119,6 +132,8 @@ func uploadFileToOCIObjectStorage(c *gin.Context, namespaceName string, bucketNa
 
 	// Upload the file to OCI Object Storage with expiration time
 	tempFileName := tempFile.Name()
+	fmt.Println("tempFilename: " + tempFile.Name())
+
 	uploadRequest := objectstorage.PutObjectRequest{
 		NamespaceName: &namespaceName,
 		BucketName:    &bucketName,
@@ -129,8 +144,6 @@ func uploadFileToOCIObjectStorage(c *gin.Context, namespaceName string, bucketNa
 			"expirationTime": expirationTime,
 		},
 	}
-
-	defer os.Remove(tempFile.Name())
 
 	// Upload the file to OCI Object Storage
 	ctx := c.Request.Context()
@@ -229,7 +242,7 @@ func generateTinyURL(c *gin.Context, originalURL string) (string, error) {
 }
 
 //TODO:
-// 1. Fix tinyURL generation
+// 1. Fix naming on upload
 // 2. OCI function to self destruct object using metadata
 // 3. frontend UI
 // 4. change production url
