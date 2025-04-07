@@ -59,7 +59,7 @@ const Upload = () => {
           borderStyle: "dashed",
         }}
       >
-        <Button fullWidth component="label" disableElevation>
+        <Grid>
           <Grid
             container
             justifyContent="center"
@@ -90,22 +90,24 @@ const Upload = () => {
             >
               or
             </Typography>
-            <Typography
-              color="var(--primary-text-color)"
-              fontSize="14px"
-              sx={{
-                textTransform: "none",
-              }}
-            >
-              Browse Files
-            </Typography>
+            <Button fullWidth component="label" disableElevation disableRipple>
+              <Typography
+                color="var(--primary-text-color)"
+                fontSize="14px"
+                sx={{
+                  textTransform: "none",
+                }}
+              >
+                Browse Files
+              </Typography>
+              <VisuallyHiddenInput
+                type="file"
+                onChange={handleFileChange}
+                multiple
+              />
+            </Button>
           </Grid>
-          <VisuallyHiddenInput
-            type="file"
-            onChange={handleFileChange}
-            multiple
-          />
-        </Button>
+        </Grid>
       </Grid>
       <Grid
         container

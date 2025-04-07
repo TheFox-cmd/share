@@ -20,6 +20,7 @@ const FileUpload = () => {
       <Grid
         container
         direction="column"
+        justifyContent="space-between"
         alignItems="center"
         minWidth="360px"
         height="fit-content"
@@ -28,7 +29,12 @@ const FileUpload = () => {
         gap="20px"
         sx={{ backgroundColor: "var(--secondary-color)", borderRadius: "16px" }}
       >
-        <Grid container width="80%" justifyContent="space-between">
+        <Grid
+          container
+          width="80%"
+          justifyContent="space-between"
+          alignItems="center"
+        >
           <Grid>
             <Button
               variant="text"
