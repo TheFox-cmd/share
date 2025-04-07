@@ -1,41 +1,76 @@
 import { useState } from "react";
-import axios from "axios";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import Upload from "./Upload";
+import Queue from "./Queue";
 
 const FileUpload = () => {
-  const [file, setFile] = useState<File | null>(null);
-  const [uploadURL, setUploadURL] = useState<string>("");
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0])
-      setFile(event.target.files[0]);
-  };
-
-  const handleFileUpload = async () => {
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const uploadEndpointURL = "http://127.0.0.1:8000/upload";
-    try {
-      const response = await axios.post(uploadEndpointURL, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      setUploadURL(response.data.tinyURL);
-    } catch (error) {
-      console.error("Error uploading file:", error);
-    }
-  };
-
+  const [uploadView, setUploadView] = useState(true);
   return (
-    <div>
-      <input type="file" onChange={handleFileChange} />
-      <button onClick={handleFileUpload}>Upload</button>
-      {uploadURL && <div>{uploadURL}</div>}
-    </div>
+    <Grid
+      container
+      justifyContent="center"
+      alignItems="center"
+      height="100vh"
+      sx={{
+        backgroundColor: "var(--primary-color)",
+      }}
+    >
+      <Grid
+        container
+        direction="column"
+        alignItems="center"
+        minWidth="360px"
+        height="fit-content"
+        minHeight="360px"
+        padding="20px"
+        gap="20px"
+        sx={{ backgroundColor: "var(--secondary-color)", borderRadius: "16px" }}
+      >
+        <Grid container width="80%" justifyContent="space-between">
+          <Grid>
+            <Button
+              variant="text"
+              disableRipple
+              disableElevation
+              onClick={() => setUploadView(true)}
+              sx={{
+                borderRadius: "12px",
+                color: "var(--tertiary-text-color)",
+              }}
+            >
+              <Typography
+                fontWeight={uploadView ? "bold" : "Normal"}
+                fontSize="16px"
+              >
+                Upload
+              </Typography>
+            </Button>
+          </Grid>
+          <Grid>
+            <Button
+              variant="text"
+              disableRipple
+              disableElevation
+              onClick={() => setUploadView(false)}
+              sx={{
+                borderRadius: "12px",
+                color: "var(--tertiary-text-color)",
+              }}
+            >
+              <Typography
+                fontWeight={uploadView ? "Normal" : "Bold"}
+                fontSize="16px"
+              >
+                Queue
+              </Typography>
+            </Button>
+          </Grid>
+        </Grid>
+        {uploadView ? <Upload /> : <Queue />}
+      </Grid>
+    </Grid>
   );
 };
 

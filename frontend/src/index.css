@@ -1,4 +1,10 @@
 :root {
+  --primary-color: #008080;
+  --secondary-color: #dfeff7;
+  --tertiary-color: #e2dcdc62;
+  --primary-text-color: #06cccc;
+  --secondary-text-color: #8d8d8d;
+  --tertiary-text-color: #000000;
 }
 
 body {
