@@ -7,10 +7,8 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Grid from "@mui/material/Grid";
 
 const Upload = () => {
-  const [file, setFile] = useState<File | null>(null);
-  const [uploadURL, setUploadURL] = useState<string>("");
-
-  console.log("Upload URL:", uploadURL);
+  const [fileArray, setFileArray] = useState<File[]>([]);
+  const [uploadURL, setUploadURL] = useState<string[]>([]);
 
   const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
@@ -25,29 +23,40 @@ const Upload = () => {
   });
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0])
-      setFile(event.target.files[0]);
+    event.preventDefault();
+    if (event.target.files) setFileArray(Array.from(event.target.files));
   };
 
   const handleFileUpload = async () => {
-    if (!file) return;
+    console.log("Uploading files:", fileArray);
+    for (const file of fileArray) {
+      if (!file) return;
 
-    const formData = new FormData();
-    formData.append("file", file);
+      const formData = new FormData();
+      formData.append("file", file);
 
-    const uploadEndpointURL = "http://127.0.0.1:8000/upload";
-    try {
-      const response = await axios.post(uploadEndpointURL, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const uploadEndpointURL = "http://127.0.0.1:8000/upload";
+      try {
+        const response = await axios.post(uploadEndpointURL, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
 
-      setUploadURL(response.data.tinyURL);
-    } catch (error) {
-      console.error("Error uploading file:", error);
+        const newURLList = [...uploadURL, response.data.tinyURL];
+        setUploadURL(newURLList);
+      } catch (error) {
+        console.error("Error uploading file:", error);
+      }
     }
   };
+
+  const handleFileDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    if (event.dataTransfer.files)
+      setFileArray(Array.from(event.dataTransfer.files));
+  };
+
   return (
     <>
       <Grid
@@ -67,6 +76,8 @@ const Upload = () => {
             direction="column"
             gap="10px"
             padding="20px"
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={handleFileDrop}
           >
             <CloudUploadIcon
               sx={{ color: "var(--primary-color)", fontSize: "50px" }}
@@ -90,7 +101,17 @@ const Upload = () => {
             >
               or
             </Typography>
-            <Button fullWidth component="label" disableElevation disableRipple>
+            <Button
+              fullWidth
+              component="label"
+              disableElevation
+              disableRipple
+              sx={{
+                "&:hover": {
+                  backgroundColor: "transparent",
+                },
+              }}
+            >
               <Typography
                 color="var(--primary-text-color)"
                 fontSize="14px"
@@ -122,6 +143,9 @@ const Upload = () => {
           sx={{
             borderColor: "var(--primary-color)",
             color: "var(--primary-color)",
+            "&:hover": {
+              backgroundColor: "transparent",
+            },
           }}
         >
           Cancel
@@ -131,7 +155,12 @@ const Upload = () => {
           disableRipple
           disableElevation
           onClick={handleFileUpload}
-          sx={{ backgroundColor: "var(--primary-color)" }}
+          sx={{
+            backgroundColor: "var(--primary-color)",
+            "&:hover": {
+              backgroundColor: "var(--primary-color)",
+            },
+          }}
         >
           Upload
         </Button>

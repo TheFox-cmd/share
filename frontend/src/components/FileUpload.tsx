@@ -44,6 +44,9 @@ const FileUpload = () => {
               sx={{
                 borderRadius: "12px",
                 color: "var(--tertiary-text-color)",
+                "&:hover": {
+                  backgroundColor: "transparent",
+                },
               }}
             >
               <Typography
@@ -63,6 +66,9 @@ const FileUpload = () => {
               sx={{
                 borderRadius: "12px",
                 color: "var(--tertiary-text-color)",
+                "&:hover": {
+                  backgroundColor: "transparent",
+                },
               }}
             >
               <Typography
