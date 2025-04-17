@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useContext } from "react";
 import axios from "axios";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Grid from "@mui/material/Grid";
+import FileContext from "../contexts/FileContext";
+import { DisplayFileObject, DisplayObject } from "../types/types";
 
 const Upload = () => {
-  const [fileArray, setFileArray] = useState<File[]>([]);
-  const [uploadURL, setUploadURL] = useState<string[]>([]);
+  const { displayFileArray, setDisplayFileArray } = useContext(FileContext);
 
   const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
@@ -24,39 +25,96 @@ const Upload = () => {
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
-    if (event.target.files) setFileArray(Array.from(event.target.files));
+    if (!event.target.files) return;
+    handleFile(event.target.files);
   };
 
   const handleFileUpload = async () => {
-    console.log("Uploading files:", fileArray);
-    for (const file of fileArray) {
-      if (!file) return;
+    console.log("all files", displayFileArray);
+    for (const fileObjectExtension of displayFileArray) {
+      if (!fileObjectExtension) return;
 
-      const formData = new FormData();
-      formData.append("file", file);
+      for (const fileObject of fileObjectExtension.fileObject) {
+        const file = fileObject.object;
+        const formData = new FormData();
+        formData.append("file", file);
 
-      const uploadEndpointURL = "http://127.0.0.1:8000/upload";
-      try {
-        const response = await axios.post(uploadEndpointURL, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-
-        const newURLList = [...uploadURL, response.data.tinyURL];
-        setUploadURL(newURLList);
-      } catch (error) {
-        console.error("Error uploading file:", error);
+        const uploadEndpointURL = "http://127.0.0.1:8000/upload";
+        try {
+          const response = await axios.post(uploadEndpointURL, formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          });
+          const extension = file.name.split(".").pop() || "unknown";
+          handleFileURLUpdate(extension, file, response.data.tinyURL);
+        } catch (error) {
+          console.error("Error uploading file:", error);
+        }
       }
     }
   };
 
   const handleFileDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-    if (event.dataTransfer.files)
-      setFileArray(Array.from(event.dataTransfer.files));
+    console.log("dropped files", event.dataTransfer.files);
+    if (!event.dataTransfer.files) return;
+    handleFile(event.dataTransfer.files);
   };
 
+  const handleFile = (fileList: FileList) => {
+    // Get the file objects that are already in the displayFileArray
+    const newFileDisplayArray: DisplayFileObject[] = [...displayFileArray];
+
+    // Get the file objects that are newly dropped
+    for (const file of fileList) {
+      const extension = file.name.split(".").pop() || "unknown";
+      const fileDisplayObject: DisplayObject = {
+        objectName: file.name,
+        object: file,
+        objectDownloadLink: "",
+      };
+
+      const cacheIndex: number = newFileDisplayArray.findIndex(
+        (fileObject) => fileObject.extension === extension
+      );
+
+      const newFileObject: DisplayFileObject = {
+        extension: extension,
+        fileObject: [fileDisplayObject],
+      };
+
+      if (cacheIndex === -1) newFileDisplayArray.push(newFileObject);
+      else newFileDisplayArray[cacheIndex].fileObject.push(fileDisplayObject);
+    }
+
+    console.log("new file display array: ", newFileDisplayArray);
+    setDisplayFileArray(newFileDisplayArray);
+  };
+
+  const handleFileURLUpdate = (
+    extension: string,
+    file: File,
+    downloadLink: string
+  ) => {
+    const newFileDisplayArray: DisplayFileObject[] = displayFileArray.map(
+      (fileObject) => {
+        if (fileObject.extension === extension) {
+          const updatedFileObject = fileObject.fileObject.map((fileObj) => {
+            if (fileObj.objectName === file.name) {
+              return { ...fileObj, objectDownloadLink: downloadLink };
+            }
+            return fileObj;
+          });
+          return { ...fileObject, fileObject: updatedFileObject };
+        }
+        return fileObject;
+      }
+    );
+
+    setDisplayFileArray(newFileDisplayArray);
+    console.log("new file display array with link: ", newFileDisplayArray);
+  };
   return (
     <>
       <Grid
