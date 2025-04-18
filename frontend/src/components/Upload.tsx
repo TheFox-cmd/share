@@ -46,7 +46,9 @@ const Upload = () => {
               "Content-Type": "multipart/form-data",
             },
           });
-          const extension = file.name.split(".").pop() || "unknown";
+          const extension = file.name.includes(".")
+            ? file.name.split(".").pop() || "unknown"
+            : "unknown";
           handleFileURLUpdate(extension, file, response.data.tinyURL);
         } catch (error) {
           console.error("Error uploading file:", error);
@@ -68,11 +70,14 @@ const Upload = () => {
 
     // Get the file objects that are newly dropped
     for (const file of fileList) {
-      const extension = file.name.split(".").pop() || "unknown";
+      const extension = file.name.includes(".")
+        ? file.name.split(".").pop() || "unknown"
+        : "unknown";
       const fileDisplayObject: DisplayObject = {
         objectName: file.name,
         object: file,
         objectDownloadLink: "",
+        objectSize: file.size,
       };
 
       const cacheIndex: number = newFileDisplayArray.findIndex(

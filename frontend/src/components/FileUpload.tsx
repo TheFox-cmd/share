@@ -20,7 +20,6 @@ const FileUpload = () => {
       <Grid
         container
         direction="column"
-        justifyContent="space-between"
         alignItems="center"
         minWidth="360px"
         height="fit-content"
