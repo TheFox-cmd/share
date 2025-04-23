@@ -1,99 +1,89 @@
 import Grid from "@mui/material/Grid";
-import { useState, useEffect, useContext } from "react";
+import { useContext } from "react";
 import FileContext from "../contexts/FileContext";
 import Typography from "@mui/material/Typography";
-import LinearProgress, {
-  LinearProgressProps,
-} from "@mui/material/LinearProgress";
-import Box from "@mui/material/Box";
-
-function LinearProgressWithLabel(
-  props: LinearProgressProps & { value: number; fileName: string }
-) {
-  return (
-    <Box sx={{ position: "relative", width: "100%" }}>
-      {/* Progress Bar */}
-      <LinearProgress
-        variant="determinate"
-        {...props}
-        sx={{
-          height: 32,
-          borderRadius: "16px",
-          backgroundColor: "var(--progress-bg-color)",
-
-          "& .MuiLinearProgress-bar": {
-            backgroundColor: "var(--progress-contrast-color)",
-          },
-        }}
-      />
-      {/* Grid overlay for labels */}
-      <Grid
-        container
-        borderRadius="16px"
-        sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          pointerEvents: "none",
-          px: 1.5,
-        }}
-        flexWrap="nowrap"
-        alignItems="center"
-        justifyContent="space-between"
-        gap="16px"
-      >
-        <Typography
-          variant="body2"
-          sx={{
-            color: "var(--tertiary-text-color)",
-            fontWeight: "bold",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {props.fileName}
-        </Typography>
-        <Typography
-          variant="body2"
-          sx={{
-            color:
-              props.value < 85
-                ? "var(--progress-contrast-color)"
-                : "var(--quaternary-text-color)",
-            fontWeight: "bold",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {`${Math.round(props.value)}%`}
-        </Typography>
-      </Grid>
-    </Box>
-  );
-}
+import LinearProgressWithLabel from "./LinearProgressWithLabel";
+import { DisplayFileObject } from "../types/types";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { DisplayObject } from "../types/types";
 
 const Queue = () => {
-  const { displayFileArray } = useContext(FileContext);
-
-  const [currentProgress, setCurrentProgress] = useState(0);
+  const { displayFileArray, setDisplayFileArray } = useContext(FileContext);
+  const [currentUpload, setCurrentUpload] = useState<DisplayObject | null>(
+    null
+  );
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentProgress((oldProgress) => {
-        if (oldProgress === 100) {
-          return 0;
-        }
-        const diff = Math.random() * 10;
-        return Math.min(oldProgress + diff, 100);
-      });
-    }, 500);
+    // Start next upload if none is active
+    if (!currentUpload) {
+      const next = findNextUploadFile(displayFileArray);
+      if (next) setCurrentUpload(next);
+    }
+  }, [displayFileArray, currentUpload]);
 
-    return () => {
-      clearInterval(timer);
-    };
-  }, []);
+  const findNextUploadFile = (
+    fileArray: DisplayFileObject[]
+  ): DisplayObject | null => {
+    for (const group of fileArray) {
+      for (const file of group.fileObject) {
+        if (!file.objectDownloadLink) return file;
+      }
+    }
+    return null;
+  };
+
+  const handleFileUpload = async (file: DisplayObject) => {
+    const formData = new FormData();
+    formData.append("file", file.object);
+
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/upload",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          onUploadProgress: (progressEvent) => {
+            const percent = Math.round(
+              (progressEvent.loaded * 100) / (progressEvent.total ?? 1)
+            );
+            updateProgress(file.objectName, percent);
+          },
+        }
+      );
+
+      updateDownloadLink(file.objectName, response.data.tinyURL);
+      setCurrentUpload(null);
+    } catch (error) {
+      console.error("Upload error:", error);
+    }
+  };
+
+  const updateProgress = (fileName: string, percent: number) => {
+    setDisplayFileArray((prev) =>
+      prev.map((group) => ({
+        ...group,
+        fileObject: group.fileObject.map((file) =>
+          file.objectName === fileName
+            ? { ...file, objectProgress: percent }
+            : file
+        ),
+      }))
+    );
+  };
+
+  const updateDownloadLink = (fileName: string, link: string) => {
+    setDisplayFileArray((prev) =>
+      prev.map((group) => ({
+        ...group,
+        fileObject: group.fileObject.map((file) =>
+          file.objectName === fileName
+            ? { ...file, objectDownloadLink: link }
+            : file
+        ),
+      }))
+    );
+  };
 
   return (
     <Grid width="80%" borderColor="var(--primary-color)" borderRadius="16px">
@@ -118,8 +108,9 @@ const Queue = () => {
               sx={{ overflow: "hidden" }}
             >
               <LinearProgressWithLabel
-                value={currentProgress}
-                fileName={fileObject.objectName}
+                fileObject={fileObject}
+                isActive={fileObject === currentUpload}
+                onStartUpload={() => handleFileUpload(fileObject)}
               />
               <Typography>{fileObject.objectDownloadLink}</Typography>
             </Grid>

@@ -2,7 +2,7 @@ type DisplayObject = {
   objectName: string;
   object: File;
   objectDownloadLink: string;
-  objectSize: number;
+  objectProgress: number;
 };
 
 type DisplayFileObject = {

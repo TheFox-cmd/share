@@ -1,5 +1,4 @@
 import { useContext } from "react";
-import axios from "axios";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
@@ -29,33 +28,7 @@ const Upload = () => {
     handleFile(event.target.files);
   };
 
-  const handleFileUpload = async () => {
-    console.log("all files", displayFileArray);
-    for (const fileObjectExtension of displayFileArray) {
-      if (!fileObjectExtension) return;
-
-      for (const fileObject of fileObjectExtension.fileObject) {
-        const file = fileObject.object;
-        const formData = new FormData();
-        formData.append("file", file);
-
-        const uploadEndpointURL = "http://127.0.0.1:8000/upload";
-        try {
-          const response = await axios.post(uploadEndpointURL, formData, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          });
-          const extension = file.name.includes(".")
-            ? file.name.split(".").pop() || "unknown"
-            : "unknown";
-          handleFileURLUpdate(extension, file, response.data.tinyURL);
-        } catch (error) {
-          console.error("Error uploading file:", error);
-        }
-      }
-    }
-  };
+  const handleFileOptimistic = () => {};
 
   const handleFileDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -77,7 +50,7 @@ const Upload = () => {
         objectName: file.name,
         object: file,
         objectDownloadLink: "",
-        objectSize: file.size,
+        objectProgress: 0,
       };
 
       const cacheIndex: number = newFileDisplayArray.findIndex(
@@ -97,29 +70,6 @@ const Upload = () => {
     setDisplayFileArray(newFileDisplayArray);
   };
 
-  const handleFileURLUpdate = (
-    extension: string,
-    file: File,
-    downloadLink: string
-  ) => {
-    const newFileDisplayArray: DisplayFileObject[] = displayFileArray.map(
-      (fileObject) => {
-        if (fileObject.extension === extension) {
-          const updatedFileObject = fileObject.fileObject.map((fileObj) => {
-            if (fileObj.objectName === file.name) {
-              return { ...fileObj, objectDownloadLink: downloadLink };
-            }
-            return fileObj;
-          });
-          return { ...fileObject, fileObject: updatedFileObject };
-        }
-        return fileObject;
-      }
-    );
-
-    setDisplayFileArray(newFileDisplayArray);
-    console.log("new file display array with link: ", newFileDisplayArray);
-  };
   return (
     <>
       <Grid
@@ -193,31 +143,13 @@ const Upload = () => {
           </Grid>
         </Grid>
       </Grid>
-      <Grid
-        container
-        width="80%"
-        justifyContent="space-between"
-        alignItems="center"
-      >
+      <Grid container width="80%" justifyContent="center">
         <Button
-          variant="outlined"
-          disableRipple
-          disableElevation
-          sx={{
-            borderColor: "var(--primary-color)",
-            color: "var(--primary-color)",
-            "&:hover": {
-              backgroundColor: "transparent",
-            },
-          }}
-        >
-          Cancel
-        </Button>
-        <Button
+          fullWidth
           variant="contained"
           disableRipple
           disableElevation
-          onClick={handleFileUpload}
+          onClick={handleFileOptimistic}
           sx={{
             backgroundColor: "var(--primary-color)",
             "&:hover": {
