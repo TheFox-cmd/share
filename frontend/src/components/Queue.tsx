@@ -47,15 +47,18 @@ const Queue = () => {
             const percent = Math.round(
               (progressEvent.loaded * 100) / (progressEvent.total ?? 1)
             );
-            updateProgress(file.objectName, percent);
+            updateProgress(file.objectName, Math.min(percent, 99));
           },
         }
       );
 
       updateDownloadLink(file.objectName, response.data.tinyURL);
+      updateProgress(file.objectName, 100);
       setCurrentUpload(null);
     } catch (error) {
       console.error("Upload error:", error);
+      updateProgress(file.objectName, 0);
+      return null;
     }
   };
 
