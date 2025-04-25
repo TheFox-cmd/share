@@ -53,19 +53,11 @@ func main() {
 		tempFile.Seek(0, 0)
 		defer tempFile.Close()
 
-		start := time.Now()
-
 		// Upload the file to OCI Object Storage
 		_, err = uploadFileToOCIObjectStorage(c, namespaceName, bucketName, tempFile)
 		if err != nil {
 			return
 		}
-
-		// calculate to exe time
-		elapsed := time.Since(start)
-		fmt.Printf("upload to OCI storage %s \n", elapsed)
-
-		start = time.Now()
 
 		// Get OCI Object URL
 		objectName := tempFile.Name()
@@ -74,23 +66,13 @@ func main() {
 			return
 		}
 
-		// calculate to exe time
-		elapsed = time.Since(start)
-		fmt.Printf("Get OCI URL %s \n", elapsed)
-
 		// Remove the temporary file after upload
 		defer os.Remove(tempFile.Name())
-
-		start = time.Now()
 
 		tinyURL, err := generateTinyURL(c, objectURL)
 		if err != nil {
 			return
 		}
-
-		// calculate to exe time
-		elapsed = time.Since(start)
-		fmt.Printf("Generate Tiny URL %s \n", elapsed)
 
 		c.JSON(http.StatusOK, gin.H{"message": "File uploaded successfully", "tinyURL": tinyURL})
 	})
