@@ -17,4 +17,12 @@ function App() {
   );
 }
 
+//TODO:
+// *. on error still return
+// *. ui
+// *. severless self-destruct function
+// *. handle multiple rounds of upload
+// *. handle delete button
+// *. deploy
+
 export default App;

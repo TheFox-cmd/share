@@ -1,12 +1,28 @@
-import { useState } from "react";
+import { startTransition, useContext, useOptimistic, useState } from "react";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Upload from "./Upload";
 import Queue from "./Queue";
+import FileContext from "../contexts/FileContext";
 
 const FileUpload = () => {
   const [uploadView, setUploadView] = useState(true);
+  const { displayFileArray } = useContext(FileContext);
+
+  const pending = displayFileArray.reduce((acc, group) => {
+    return (
+      acc + group.fileObject.filter((file) => !file.objectDownloadLink).length
+    );
+  }, 0);
+  const [optimisticPending, addOptimisticUpdate] = useOptimistic(pending);
+
+  const handleComplete = () => {
+    startTransition(() => {
+      addOptimisticUpdate((curr) => curr - 1);
+    });
+  };
+
   return (
     <Grid
       container
@@ -74,25 +90,15 @@ const FileUpload = () => {
                 fontWeight={uploadView ? "Normal" : "Bold"}
                 fontSize="16px"
               >
-                Queue
+                Queue({optimisticPending})
               </Typography>
             </Button>
           </Grid>
         </Grid>
-        {uploadView ? <Upload /> : <Queue />}
+        {uploadView ? <Upload /> : <Queue handleComplete={handleComplete} />}
       </Grid>
     </Grid>
   );
 };
 
 export default FileUpload;
-
-//ToDo:
-// 1. queue file show
-// 2. Progerss bar
-// 3. number file mui
-// 4. show uploading
-// 5. context
-
-// cloud
-// 1. fix self destruct funtion -- test

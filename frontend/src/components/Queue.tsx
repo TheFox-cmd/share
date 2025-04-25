@@ -8,7 +8,11 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { DisplayObject } from "../types/types";
 
-const Queue = () => {
+interface QueueProps {
+  handleComplete: () => void;
+}
+
+const Queue: React.FC<QueueProps> = ({ handleComplete }) => {
   const { displayFileArray, setDisplayFileArray } = useContext(FileContext);
   const [currentUpload, setCurrentUpload] = useState<DisplayObject | null>(
     null
@@ -68,9 +72,12 @@ const Queue = () => {
       updateDownloadLink(file.objectName, response.data.tinyURL);
       updateProgress(file.objectName, 100);
       setCurrentUpload(null);
+      handleComplete();
     } catch (error) {
       console.error("Upload error:", error);
       updateProgress(file.objectName, 0);
+      setCurrentUpload(null);
+      handleComplete();
       return null;
     }
   };
