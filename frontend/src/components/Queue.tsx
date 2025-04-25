@@ -13,7 +13,6 @@ const Queue = () => {
   const [currentUpload, setCurrentUpload] = useState<DisplayObject | null>(
     null
   );
-  const [intervalDisplay, setIntervalDisplay] = useState<number>(500);
 
   useEffect(() => {
     // Start next upload if none is active
