@@ -51,6 +51,7 @@ const Upload = () => {
         object: file,
         objectDownloadLink: "",
         objectProgress: 0,
+        objectSize: file.size,
       };
 
       const cacheIndex: number = newFileDisplayArray.findIndex(

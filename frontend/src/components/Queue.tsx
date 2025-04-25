@@ -13,6 +13,7 @@ const Queue = () => {
   const [currentUpload, setCurrentUpload] = useState<DisplayObject | null>(
     null
   );
+  const [intervalDisplay, setIntervalDisplay] = useState<number>(500);
 
   useEffect(() => {
     // Start next upload if none is active
@@ -36,6 +37,24 @@ const Queue = () => {
   const handleFileUpload = async (file: DisplayObject) => {
     const formData = new FormData();
     formData.append("file", file.object);
+    const bytesPerSecond = 800;
+
+    let simulatedProgress = 0;
+    const interval =
+      (100 * (bytesPerSecond * 1024)) / (file.objectSize + 4 * bytesPerSecond);
+
+    const tick = () => {
+      if (simulatedProgress > 99) return;
+
+      // Increase progress
+      simulatedProgress += interval;
+      updateProgress(file.objectName, Math.min(simulatedProgress, 99));
+
+      const nextInterval = Math.random() * 1000 + 300;
+      setTimeout(tick, nextInterval);
+    };
+
+    tick();
 
     try {
       const response = await axios.post(
@@ -43,15 +62,10 @@ const Queue = () => {
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
-          onUploadProgress: (progressEvent) => {
-            const percent = Math.round(
-              (progressEvent.loaded * 100) / (progressEvent.total ?? 1)
-            );
-            updateProgress(file.objectName, Math.min(percent, 99));
-          },
         }
       );
 
+      simulatedProgress = 100;
       updateDownloadLink(file.objectName, response.data.tinyURL);
       updateProgress(file.objectName, 100);
       setCurrentUpload(null);
