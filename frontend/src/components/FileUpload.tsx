@@ -58,7 +58,7 @@ const FileUpload = () => {
               onClick={() => setUploadView(true)}
               sx={{
                 borderRadius: "12px",
-                color: "var(--tertiary-text-color)",
+                color: "var(--primary-text-color)",
                 "&:hover": {
                   backgroundColor: "transparent",
                 },
@@ -80,7 +80,7 @@ const FileUpload = () => {
               onClick={() => setUploadView(false)}
               sx={{
                 borderRadius: "12px",
-                color: "var(--tertiary-text-color)",
+                color: "var(--primary-text-color)",
                 "&:hover": {
                   backgroundColor: "transparent",
                 },

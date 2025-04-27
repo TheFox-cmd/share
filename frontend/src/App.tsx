@@ -19,8 +19,9 @@ function App() {
 
 //TODO:
 // *. on error still return
+// *, overflow file does not extend height (queue)
 // *. ui
-// *. severless self-destruct function
+// *. serverless self-destruct function
 // *. handle multiple rounds of upload
 // *. handle delete button
 // *. deploy

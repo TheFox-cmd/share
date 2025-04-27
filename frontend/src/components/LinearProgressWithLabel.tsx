@@ -61,7 +61,7 @@ const LinearProgressWithLabel: React.FC<LinearProgressWithLabelProps> = ({
         <Typography
           variant="body2"
           sx={{
-            color: "var(--tertiary-text-color)",
+            color: "var(--primary-text-color)",
             fontWeight: "bold",
             whiteSpace: "nowrap",
             overflow: "hidden",
@@ -73,10 +73,7 @@ const LinearProgressWithLabel: React.FC<LinearProgressWithLabelProps> = ({
         <Typography
           variant="body2"
           sx={{
-            color:
-              fileObject.objectProgress < 85
-                ? "var(--progress-contrast-color)"
-                : "var(--quaternary-text-color)",
+            color: "var(--primary-text-color)",
             fontWeight: "bold",
             whiteSpace: "nowrap",
           }}
