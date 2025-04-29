@@ -12,7 +12,10 @@ const FileUpload = () => {
 
   const pending = displayFileArray.reduce((acc, group) => {
     return (
-      acc + group.fileObject.filter((file) => !file.objectDownloadLink).length
+      acc +
+      group.fileObject.filter(
+        (file) => !file.objectFailed && !file.objectDownloadLink
+      ).length
     );
   }, 0);
   const [optimisticPending, addOptimisticUpdate] = useOptimistic(pending);

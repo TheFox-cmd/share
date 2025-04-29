@@ -75,11 +75,23 @@ const Queue: React.FC<QueueProps> = ({ handleComplete }) => {
       handleComplete();
     } catch (error) {
       console.error("Upload error:", error);
+      updateFailed(file.objectName);
       updateProgress(file.objectName, 0);
       setCurrentUpload(null);
       handleComplete();
       return null;
     }
+  };
+
+  const updateFailed = (fileName: string) => {
+    setDisplayFileArray((prev) =>
+      prev.map((group) => ({
+        ...group,
+        fileObject: group.fileObject.map((file) =>
+          file.objectName === fileName ? { ...file, objectFailed: true } : file
+        ),
+      }))
+    );
   };
 
   const updateProgress = (fileName: string, percent: number) => {

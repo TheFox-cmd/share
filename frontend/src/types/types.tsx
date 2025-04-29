@@ -4,6 +4,7 @@ type DisplayObject = {
   objectDownloadLink: string;
   objectProgress: number;
   objectSize: number;
+  objectFailed: boolean;
 };
 
 type DisplayFileObject = {

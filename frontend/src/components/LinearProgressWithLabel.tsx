@@ -18,7 +18,11 @@ const LinearProgressWithLabel: React.FC<LinearProgressWithLabelProps> = ({
   ...props
 }) => {
   useEffect(() => {
-    if (isActive && !fileObject.objectDownloadLink) {
+    if (
+      isActive &&
+      !fileObject.objectFailed &&
+      !fileObject.objectDownloadLink
+    ) {
       onStartUpload();
     }
   }, [isActive, fileObject, onStartUpload]);
