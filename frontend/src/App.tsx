@@ -18,7 +18,6 @@ function App() {
 }
 
 //TODO:
-// *. on error still return
 // *, overflow file does not extend height (queue)
 // *. ui
 // *. handle multiple rounds of upload

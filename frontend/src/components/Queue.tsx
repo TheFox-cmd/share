@@ -43,11 +43,12 @@ const Queue: React.FC<QueueProps> = ({ handleComplete }) => {
     const bytesPerSecond = 800;
 
     let simulatedProgress = 0;
+    let uploadError = false;
     const interval =
       (100 * (bytesPerSecond * 1024)) / (file.objectSize + 4 * bytesPerSecond);
 
     const tick = () => {
-      if (simulatedProgress > 99) return;
+      if (uploadError || simulatedProgress > 99) return;
 
       // Increase progress
       simulatedProgress += interval;
@@ -75,11 +76,11 @@ const Queue: React.FC<QueueProps> = ({ handleComplete }) => {
       handleComplete();
     } catch (error) {
       console.error("Upload error:", error);
+      uploadError = true;
       updateFailed(file.objectName);
       updateProgress(file.objectName, 0);
       setCurrentUpload(null);
       handleComplete();
-      return null;
     }
   };
 
@@ -121,12 +122,19 @@ const Queue: React.FC<QueueProps> = ({ handleComplete }) => {
   };
 
   return (
-    <Grid width="80%" borderColor="var(--primary-color)" borderRadius="16px">
+    <Grid
+      container
+      direction="column"
+      width="80%"
+      borderColor="var(--primary-color)"
+      borderRadius="16px"
+      wrap="nowrap"
+      overflow="auto"
+    >
       {displayFileArray.map((fileExtensionObject, fileExtensionObjectIndex) => (
         <Grid
           key={fileExtensionObjectIndex}
           container
-          justifyContent="center"
           direction="column"
           gap="8px"
         >

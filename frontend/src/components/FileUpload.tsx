@@ -41,10 +41,11 @@ const FileUpload = () => {
         direction="column"
         alignItems="center"
         minWidth="360px"
-        height="fit-content"
-        minHeight="360px"
+        height="420px"
         padding="20px"
+        justifyContent="space-between"
         gap="20px"
+        wrap="nowrap"
         sx={{ backgroundColor: "var(--secondary-color)", borderRadius: "16px" }}
       >
         <Grid

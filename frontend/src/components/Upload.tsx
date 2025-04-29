@@ -75,6 +75,9 @@ const Upload = () => {
   return (
     <>
       <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
         width="80%"
         borderColor="var(--primary-color)"
         borderRadius="16px"
@@ -83,66 +86,64 @@ const Upload = () => {
           borderStyle: "dashed",
         }}
       >
-        <Grid>
-          <Grid
-            container
-            justifyContent="center"
-            alignItems="center"
-            direction="column"
-            gap="10px"
-            padding="20px"
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={handleFileDrop}
+        <Grid
+          container
+          justifyContent="center"
+          alignItems="center"
+          direction="column"
+          gap="10px"
+          padding="20px"
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={handleFileDrop}
+        >
+          <CloudUploadIcon
+            sx={{ color: "var(--primary-color)", fontSize: "50px" }}
+          />
+          <Typography
+            color="var(--secondary-text-color)"
+            fontSize="14px"
+            fontWeight="semibold"
+            sx={{
+              textTransform: "none",
+            }}
           >
-            <CloudUploadIcon
-              sx={{ color: "var(--primary-color)", fontSize: "50px" }}
+            Drag & Drop Files Here
+          </Typography>
+          <Typography
+            color="var(--secondary-text-color)"
+            fontSize="14px"
+            sx={{
+              textTransform: "none",
+            }}
+          >
+            or
+          </Typography>
+          <Button
+            fullWidth
+            component="label"
+            disableElevation
+            disableRipple
+            sx={{
+              "&:hover": {
+                backgroundColor: "transparent",
+              },
+            }}
+          >
+            <Typography
+              color="var(--primary-text-color)"
+              fontSize="14px"
+              sx={{
+                textTransform: "none",
+              }}
+            >
+              Browse Files
+            </Typography>
+            <VisuallyHiddenInput
+              type="file"
+              onChange={handleFileChange}
+              multiple
             />
-            <Typography
-              color="var(--secondary-text-color)"
-              fontSize="14px"
-              fontWeight="semibold"
-              sx={{
-                textTransform: "none",
-              }}
-            >
-              Drag & Drop Files Here
-            </Typography>
-            <Typography
-              color="var(--secondary-text-color)"
-              fontSize="14px"
-              sx={{
-                textTransform: "none",
-              }}
-            >
-              or
-            </Typography>
-            <Button
-              fullWidth
-              component="label"
-              disableElevation
-              disableRipple
-              sx={{
-                "&:hover": {
-                  backgroundColor: "transparent",
-                },
-              }}
-            >
-              <Typography
-                color="var(--primary-text-color)"
-                fontSize="14px"
-                sx={{
-                  textTransform: "none",
-                }}
-              >
-                Browse Files
-              </Typography>
-              <VisuallyHiddenInput
-                type="file"
-                onChange={handleFileChange}
-                multiple
-              />
-            </Button>
-          </Grid>
+          </Button>
         </Grid>
       </Grid>
       <Grid container width="80%" justifyContent="center">
