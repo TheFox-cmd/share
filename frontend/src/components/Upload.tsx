@@ -79,6 +79,7 @@ const Upload = () => {
         justifyContent="center"
         alignItems="center"
         width="80%"
+        height="240px"
         borderColor="var(--primary-color)"
         borderRadius="16px"
         sx={{

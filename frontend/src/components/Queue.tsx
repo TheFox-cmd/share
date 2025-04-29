@@ -125,11 +125,27 @@ const Queue: React.FC<QueueProps> = ({ handleComplete }) => {
     <Grid
       container
       direction="column"
-      width="80%"
+      width="90%"
       borderColor="var(--primary-color)"
       borderRadius="16px"
       wrap="nowrap"
       overflow="auto"
+      sx={{
+        "&::-webkit-scrollbar": {
+          width: "6px",
+        },
+        "&::-webkit-scrollbar-track": {
+          backgroundColor: "rgba(0,0,0,0.1)",
+          borderRadius: "10px",
+        },
+        "&::-webkit-scrollbar-button": {
+          display: "none",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          backgroundColor: "rgba(220,0,0,0.2)",
+          borderRadius: "10px",
+        },
+      }}
     >
       {displayFileArray.map((fileExtensionObject, fileExtensionObjectIndex) => (
         <Grid

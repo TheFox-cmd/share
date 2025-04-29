@@ -18,10 +18,10 @@ function App() {
 }
 
 //TODO:
-// *, overflow file does not extend height (queue)
 // *. ui
 // *. handle multiple rounds of upload
 // *. handle delete button
+// *. handle copy button
 // *. serverless self-destruct function
 // *. deploy
 
