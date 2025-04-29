@@ -31,7 +31,7 @@ const Queue: React.FC<QueueProps> = ({ handleComplete }) => {
   ): DisplayObject | null => {
     for (const group of fileArray) {
       for (const file of group.fileObject) {
-        if (!file.objectDownloadLink) return file;
+        if (!file.objectFailed && !file.objectDownloadLink) return file;
       }
     }
     return null;
