@@ -18,10 +18,8 @@ function App() {
 }
 
 //TODO:
-// *. ui
-// *. handle multiple rounds of upload
+// *. handle error return ui
 // *. handle delete button
-// *. handle copy button
 // *. serverless self-destruct function
 // *. deploy
 

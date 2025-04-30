@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
@@ -9,6 +9,7 @@ import { DisplayFileObject, DisplayObject } from "../types/types";
 
 const Upload = () => {
   const { displayFileArray, setDisplayFileArray } = useContext(FileContext);
+  const [tempFileArray, setTempFileArray] = useState<DisplayFileObject[]>([]);
 
   const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
@@ -28,18 +29,36 @@ const Upload = () => {
     handleFile(event.target.files);
   };
 
-  const handleFileOptimistic = () => {};
+  const handleFileOptimistic = () => {
+    // Get the file objects that are already in the displayFileArray
+    const newDisplayFileArray: DisplayFileObject[] = [...displayFileArray];
+
+    // Get the file objects that are newly dropped
+    for (const fileObject of tempFileArray) {
+      const cacheIndex: number = newDisplayFileArray.findIndex(
+        (file) => file.extension === fileObject.extension
+      );
+
+      if (cacheIndex === -1) newDisplayFileArray.push(fileObject);
+      else
+        newDisplayFileArray[cacheIndex].fileObject.push(
+          ...fileObject.fileObject
+        );
+    }
+
+    setDisplayFileArray(newDisplayFileArray);
+    setTempFileArray([]);
+  };
 
   const handleFileDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-    console.log("dropped files", event.dataTransfer.files);
     if (!event.dataTransfer.files) return;
     handleFile(event.dataTransfer.files);
   };
 
   const handleFile = (fileList: FileList) => {
     // Get the file objects that are already in the displayFileArray
-    const newFileDisplayArray: DisplayFileObject[] = [...displayFileArray];
+    const newTempFileArray: DisplayFileObject[] = [...tempFileArray];
 
     // Get the file objects that are newly dropped
     for (const file of fileList) {
@@ -55,7 +74,7 @@ const Upload = () => {
         objectFailed: false,
       };
 
-      const cacheIndex: number = newFileDisplayArray.findIndex(
+      const cacheIndex: number = newTempFileArray.findIndex(
         (fileObject) => fileObject.extension === extension
       );
 
@@ -64,11 +83,11 @@ const Upload = () => {
         fileObject: [fileDisplayObject],
       };
 
-      if (cacheIndex === -1) newFileDisplayArray.push(newFileObject);
-      else newFileDisplayArray[cacheIndex].fileObject.push(fileDisplayObject);
-    }
+      if (cacheIndex === -1) newTempFileArray.push(newFileObject);
+      else newTempFileArray[cacheIndex].fileObject.push(fileDisplayObject);
 
-    setDisplayFileArray(newFileDisplayArray);
+      setTempFileArray(newTempFileArray);
+    }
   };
 
   return (
