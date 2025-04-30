@@ -1,5 +1,4 @@
 import LinearProgress from "@mui/material/LinearProgress";
-import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { DisplayObject } from "../types/types";
@@ -28,7 +27,12 @@ const LinearProgressWithLabel: React.FC<LinearProgressWithLabelProps> = ({
   }, [isActive, fileObject, onStartUpload]);
 
   return (
-    <Box sx={{ position: "relative", width: "100%" }}>
+    <Grid
+      position="relative"
+      width="100%"
+      padding="6px"
+      sx={{ backgroundColor: "var(--primary-color)" }}
+    >
       {/* Progress Bar */}
       <LinearProgress
         variant="determinate"
@@ -36,7 +40,7 @@ const LinearProgressWithLabel: React.FC<LinearProgressWithLabelProps> = ({
         value={fileObject.objectProgress}
         sx={{
           height: 32,
-          borderRadius: "16px",
+          borderRadius: "8px",
           backgroundColor: "var(--progress-bg-color)",
 
           "& .MuiLinearProgress-bar": {
@@ -85,7 +89,7 @@ const LinearProgressWithLabel: React.FC<LinearProgressWithLabelProps> = ({
           {`${Math.round(fileObject.objectProgress)}%`}
         </Typography>
       </Grid>
-    </Box>
+    </Grid>
   );
 };
 

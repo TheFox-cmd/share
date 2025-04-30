@@ -130,6 +130,7 @@ const Queue: React.FC<QueueProps> = ({ handleComplete }) => {
       borderRadius="16px"
       wrap="nowrap"
       overflow="auto"
+      gap="8px"
       sx={{
         "&::-webkit-scrollbar": {
           width: "6px",
@@ -148,12 +149,7 @@ const Queue: React.FC<QueueProps> = ({ handleComplete }) => {
       }}
     >
       {displayFileArray.map((fileExtensionObject, fileExtensionObjectIndex) => (
-        <Grid
-          key={fileExtensionObjectIndex}
-          container
-          direction="column"
-          gap="8px"
-        >
+        <Grid key={fileExtensionObjectIndex} container direction="column">
           <Typography fontWeight="bold">
             .{fileExtensionObject.extension}
           </Typography>
