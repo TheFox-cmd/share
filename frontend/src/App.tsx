@@ -18,9 +18,8 @@ function App() {
 }
 
 //TODO:
-// *. handle error return ui
-// *. handle delete button
 // *. serverless self-destruct function
+// *. handle delete button
 // *. deploy
 
 export default App;

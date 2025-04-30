@@ -36,7 +36,9 @@ const LinearProgressWithLabel: React.FC<LinearProgressWithLabelProps> = ({
         sx={{
           height: 32,
           borderRadius: "10px",
-          backgroundColor: "var(--progress-bg-color)",
+          backgroundColor: fileObject.objectFailed
+            ? "var(--progress-error-color)"
+            : "var(--progress-bg-color)",
 
           "& .MuiLinearProgress-bar": {
             backgroundColor: "var(--progress-contrast-color)",
@@ -80,7 +82,9 @@ const LinearProgressWithLabel: React.FC<LinearProgressWithLabelProps> = ({
             whiteSpace: "nowrap",
           }}
         >
-          {`${Math.round(fileObject.objectProgress)}%`}
+          {fileObject.objectFailed
+            ? `Error`
+            : `${Math.round(fileObject.objectProgress)}%`}
         </Typography>
       </Grid>
     </Grid>
