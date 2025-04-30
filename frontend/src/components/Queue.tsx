@@ -7,6 +7,8 @@ import { DisplayFileObject } from "../types/types";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { DisplayObject } from "../types/types";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import IconButton from "@mui/material/IconButton";
 
 interface QueueProps {
   handleComplete: () => void;
@@ -121,6 +123,14 @@ const Queue: React.FC<QueueProps> = ({ handleComplete }) => {
     );
   };
 
+  const handleCopy = async (downloadLink: string) => {
+    try {
+      await navigator.clipboard.writeText(downloadLink);
+    } catch (err) {
+      console.error("Failed to copy text:", err);
+    }
+  };
+
   return (
     <Grid
       container
@@ -149,7 +159,12 @@ const Queue: React.FC<QueueProps> = ({ handleComplete }) => {
       }}
     >
       {displayFileArray.map((fileExtensionObject, fileExtensionObjectIndex) => (
-        <Grid key={fileExtensionObjectIndex} container direction="column">
+        <Grid
+          key={fileExtensionObjectIndex}
+          container
+          direction="column"
+          gap="8px"
+        >
           <Typography fontWeight="bold">
             .{fileExtensionObject.extension}
           </Typography>
@@ -158,16 +173,50 @@ const Queue: React.FC<QueueProps> = ({ handleComplete }) => {
               key={fileObjectIndex}
               container
               justifyContent="center"
+              alignItems="center"
               direction="column"
-              padding="4px 8px"
-              sx={{ overflow: "hidden" }}
+              padding="8px"
+              borderRadius="12px"
+              sx={{
+                overflow: "hidden",
+                backgroundColor: "var(--primary-color)",
+              }}
             >
               <LinearProgressWithLabel
                 fileObject={fileObject}
                 isActive={fileObject === currentUpload}
                 onStartUpload={() => handleFileUpload(fileObject)}
               />
-              <Typography>{fileObject.objectDownloadLink}</Typography>
+              {fileObject.objectDownloadLink && (
+                <Grid
+                  container
+                  width="90%"
+                  height="32px"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  padding="6px 8px"
+                  borderRadius="0 0 10px 10px"
+                  sx={{ backgroundColor: "var(--tertiary-color)" }}
+                >
+                  <Typography fontSize="14px" noWrap>
+                    {fileObject.objectDownloadLink}
+                  </Typography>
+
+                  <IconButton
+                    size="medium"
+                    sx={{
+                      padding: 0,
+                      marginLeft: "8px",
+                      "&:hover": {
+                        color: "var(--button-highlight-color)",
+                      },
+                    }}
+                    onClick={() => handleCopy(fileObject.objectDownloadLink)}
+                  >
+                    <AttachFileIcon fontSize="small" />
+                  </IconButton>
+                </Grid>
+              )}
             </Grid>
           ))}
         </Grid>

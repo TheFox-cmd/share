@@ -68,7 +68,6 @@ const Upload = () => {
       else newFileDisplayArray[cacheIndex].fileObject.push(fileDisplayObject);
     }
 
-    console.log("new file display array: ", newFileDisplayArray);
     setDisplayFileArray(newFileDisplayArray);
   };
 

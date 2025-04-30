@@ -27,12 +27,7 @@ const LinearProgressWithLabel: React.FC<LinearProgressWithLabelProps> = ({
   }, [isActive, fileObject, onStartUpload]);
 
   return (
-    <Grid
-      position="relative"
-      width="100%"
-      padding="6px"
-      sx={{ backgroundColor: "var(--primary-color)" }}
-    >
+    <Grid position="relative" width="100%" borderRadius="10px">
       {/* Progress Bar */}
       <LinearProgress
         variant="determinate"
@@ -40,7 +35,7 @@ const LinearProgressWithLabel: React.FC<LinearProgressWithLabelProps> = ({
         value={fileObject.objectProgress}
         sx={{
           height: 32,
-          borderRadius: "8px",
+          borderRadius: "10px",
           backgroundColor: "var(--progress-bg-color)",
 
           "& .MuiLinearProgress-bar": {
@@ -51,20 +46,19 @@ const LinearProgressWithLabel: React.FC<LinearProgressWithLabelProps> = ({
       {/* Grid overlay for labels */}
       <Grid
         container
-        borderRadius="16px"
         sx={{
           position: "absolute",
           top: 0,
           left: 0,
           width: "100%",
-          height: "100%",
+          height: "110%",
           pointerEvents: "none",
           px: 1.5,
         }}
         flexWrap="nowrap"
         alignItems="center"
         justifyContent="space-between"
-        gap="16px"
+        gap="12px"
       >
         <Typography
           variant="body2"
